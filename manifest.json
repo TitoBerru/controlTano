@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Tano App",
+  "name": "App para control ausentismo del Club Italiano Rugby",
   "icons": [
     {
       "src": "favicon.ico",
