@@ -74,12 +74,28 @@ function App() {
   const generateWhatsAppMessage = () => {
     const dateKey = selectedDate.toISOString().split('T')[0];
     let message = `Listado de asistencia para el ${dateKey}:\n\n`;
-
+  
+    let totalStudents = 0;
+    let totalPresent = 0;
+    let totalAbsent = 0;
+  
     students.forEach(student => {
       const isAbsent = absences[student.id]?.[dateKey] || false;
-      message += `${student.name}:${isAbsent ? 'Ausente' : 'Presente'}\n`;
+      totalStudents++;
+      if (isAbsent) {
+        totalAbsent++;
+        message += `${student.name}: Ausente\n`;
+      } else {
+        totalPresent++;
+        message += `${student.name}: Presente\n`;
+      }
     });
-
+  
+    message += `\nResumen:\n`;
+    message += `Total de jugadores: ${totalStudents}\n`;
+    message += `Total presentes: ${totalPresent}\n`;
+    message += `Total ausentes: ${totalAbsent}`;
+  
     return message;
   };
 
