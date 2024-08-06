@@ -77,7 +77,7 @@ function App() {
 
     students.forEach(student => {
       const isAbsent = absences[student.id]?.[dateKey] || false;
-      message += `${student.name} (${student.nickname} - ${student.position}): ${isAbsent ? 'Ausente' : 'Presente'}\n`;
+      message += `${student.name}: ${isAbsent ? 'Ausente' : 'Presente'}\n`;
     });
 
     return message;
