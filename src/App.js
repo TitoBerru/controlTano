@@ -6,6 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import AdminPanel from './components/AdminPanel';
 import studentsData from './students.json';
 
+
 function App() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [absences, setAbsences] = useState({});

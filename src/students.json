@@ -1,5 +1,5 @@
 [
-  { "id": 1, "name": "Alvarez Thiago - Thiaguito", "nickname":"Thiaguito", "position":"Back"},
+  { "id": 1, "name": "Alvarez Thiago", "nickname":"Thiaguito", "position":"Back"},
   { "id": 2, "name": "Barrionuevo Nahuel" , "nickname":"Naheu", "position":"Forward"},
   { "id": 3, "name": "Bacigaluppi Franco", "nickname":"Fran", "position":"Forward" },
   { "id": 4, "name": "Bergart Fran", "nickname":"Polaco", "position":"Back"  },
