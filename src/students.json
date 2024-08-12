@@ -26,12 +26,12 @@
 {"id": 25, "name":"Vallejos Luciano", "nickname":"Lucho", "position":"Back"},
 {"id": 26, "name":"Velazco Facundo", "nickname":"Facu", "position":"Forward"},
 {"id": 27, "name":"FRANCO M15", "nickname":"", "position":""},
-{"id": 28, "name":"Nogales Luciano", "nickname":"Santi", "position":"Forward"},
-{"id": 29, "name":"Muzzu Santiago", "nickname":"Santi", "position":"Forward"},
-{"id": 30, "name":"Jaliff Julian", "nickname":"Santi", "position":"Forward"},
-{"id": 31, "name":"Samuel", "nickname":"Santi", "position":"Forward"},
+{"id": 28, "name":"Nogales Luciano", "nickname":"", "position":""},
+{"id": 29, "name":"Muzzu Santiago", "nickname":"", "position":""},
+{"id": 30, "name":"Jaliff Julian", "nickname":"", "position":""},
+{"id": 31, "name":"Samuel", "nickname":"", "position":""},
 {"id": 32, "name":"Zapata Santino", "nickname":"Santi", "position":"Forward"},
-{"id": 33, "name":"Rodriguez Colman Cesar", "nickname":"Cesar", "position":"Back"}
+{"id": 33, "name":"Rodriguez Colman Cesar", "nickname":"Cesar", "position":"Forward"}
 
 
 ]
