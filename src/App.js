@@ -14,7 +14,8 @@ function App() {
   const [showAdminPanel, setShowAdminPanel] = useState(false);
 
   useEffect(() => {
-    setStudents(studentsData);
+    const sortedStudents = [...studentsData].sort((a, b) => a.name.localeCompare(b.name));
+    setStudents(sortedStudents);
     
     // Inicializar ausencias
     const initialAbsences = {};
