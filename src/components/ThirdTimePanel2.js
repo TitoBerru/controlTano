@@ -1,31 +1,17 @@
 // ThirdTimePanel.js
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-function ThirdTimePanel({
-  items = [],
-  onAddItem,
-  onAssignResponsible,
-  onDeleteItem,
-}) {
-  const [newItem, setNewItem] = useState("");
-  const [responsible, setResponsible] = useState("");
+
+function ThirdTimePanel({ items = [], onAddItem, onAssignResponsible, onDeleteItem }) {
+  const [newItem, setNewItem] = useState('');
+  const [responsible, setResponsible] = useState('');
 
   const handleAddItem = () => {
     if (newItem && responsible) {
       onAddItem(newItem, responsible);
-      setNewItem("");
-      setResponsible("");
+      setNewItem('');
+      setResponsible('');
     }
-  };
-
-  const generateThirdTimeWhatsAppMessage = () => {
-    let message = `Tareas asignadas para el 3er Tiempo:\n\n`;
-
-    items.forEach((item) => {
-      message += `${item.name}: ${item.responsible}\n\n`;
-    });
-
-    return message;
   };
 
   return (
@@ -53,7 +39,6 @@ function ThirdTimePanel({
         >
           Agregar Tarea
         </button>
-       
       </div>
 
       <ul>
@@ -69,18 +54,6 @@ function ThirdTimePanel({
           </li>
         ))}
       </ul>
-      <button
-          onClick={() => {
-            const message = generateThirdTimeWhatsAppMessage();
-            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
-              message
-            )}`;
-            window.open(whatsappUrl, "_blank");
-          }}
-          className="p-2 bg-blue-500 text-white rounded"
-        >
-          Enviar por 3er T por WhatsApp
-        </button>
     </div>
   );
 }

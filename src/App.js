@@ -42,8 +42,8 @@ function App() {
     });
   };
 
-  const handleAddStudent = (name, nickname, position, dorsal) => {
-    const newStudent = { id: students.length + 1, name, nickname, position, dorsal };
+  const handleAddStudent = (name, nickname, position) => {
+    const newStudent = { id: students.length + 1, name, nickname, position };
     setStudents((prevStudents) => [...prevStudents, newStudent]);
 
     // Marcar nuevo estudiante como ausente en la fecha seleccionada
