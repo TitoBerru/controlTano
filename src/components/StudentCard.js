@@ -9,6 +9,8 @@ const StudentCard = ({ student, selectedDate, absences, onToggleAbsence, isAdmin
       <h2 className="text-xl font-semibold">{student.name}</h2>
       <p className="text-sm">Apodo: {student.nickname}</p>
       <p className="text-sm">Posición: {student.position}</p>
+      <p className="text-sm">Dorsal: {student.dorsal}</p>
+
       <p className="text-xl font-bold">{isAbsent ? 'Ausente' : 'Presente'}</p>
       <button
         className="mt-2 p-2 bg-blue-500 text-white rounded"

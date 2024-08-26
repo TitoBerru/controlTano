@@ -4,21 +4,20 @@ import StudentList from './components/StudentList';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import AdminPanel from './components/AdminPanel';
-import ThirdTimePanel from './components/ThirdTimePanel'; // Importar el nuevo componente
 import studentsData from './students.json';
+
 
 function App() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [absences, setAbsences] = useState({});
   const [students, setStudents] = useState([]);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
-  const [showThirdTimePanel, setShowThirdTimePanel] = useState(false);
-  const [items, setItems] = useState([]);
+ 
 
   useEffect(() => {
     const sortedStudents = [...studentsData].sort((a, b) => a.name.localeCompare(b.name));
     setStudents(sortedStudents);
-
+    
     // Inicializar ausencias
     const initialAbsences = {};
     const dateKey = new Date().toISOString().split('T')[0];
@@ -42,10 +41,10 @@ function App() {
     });
   };
 
-  const handleAddStudent = (name, nickname, position, dorsal) => {
-    const newStudent = { id: students.length + 1, name, nickname, position, dorsal };
+  const handleAddStudent = (name, nickname, position) => {
+    const newStudent = { id: students.length + 1, name, nickname, position };
     setStudents((prevStudents) => [...prevStudents, newStudent]);
-
+    
     // Marcar nuevo estudiante como ausente en la fecha seleccionada
     setAbsences((prevAbsences) => {
       const dateKey = selectedDate.toISOString().split('T')[0];
@@ -66,7 +65,7 @@ function App() {
 
   const handleDeleteStudent = (id) => {
     setStudents((prevStudents) => prevStudents.filter((student) => student.id !== id));
-
+    
     // Eliminar las ausencias del estudiante eliminado
     setAbsences((prevAbsences) => {
       const newAbsences = { ...prevAbsences };
@@ -75,22 +74,14 @@ function App() {
     });
   };
 
-  const handleAddItem = (name, responsible) => {
-    setItems((prevItems) => [...prevItems, { name, responsible }]);
-  };
-
-  const handleDeleteItem = (index) => {
-    setItems((prevItems) => prevItems.filter((_, i) => i !== index));
-  };
-
   const generateWhatsAppMessage = () => {
     const dateKey = selectedDate.toISOString().split('T')[0];
     let message = `Listado de asistencia para el ${dateKey}:\n\n`;
-
+  
     let totalStudents = 0;
     let totalPresent = 0;
     let totalAbsent = 0;
-
+  
     students.forEach(student => {
       const isAbsent = absences[student.id]?.[dateKey] || false;
       totalStudents++;
@@ -102,12 +93,12 @@ function App() {
         message += `${student.name}: Presente\n`;
       }
     });
-
+  
     message += `\nResumen:\n`;
     message += `Total de jugadores: ${totalStudents}\n`;
     message += `Total presentes: ${totalPresent}\n`;
     message += `Total ausentes: ${totalAbsent}`;
-
+  
     return message;
   };
 
@@ -116,6 +107,7 @@ function App() {
     const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
+  
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -129,7 +121,7 @@ function App() {
             className="p-2 border rounded"
           />
         </div>
-
+        
         <button
           onClick={() => setShowAdminPanel(!showAdminPanel)}
           className="p-2 bg-green-500 text-white rounded mb-4"
@@ -137,33 +129,19 @@ function App() {
           {showAdminPanel ? 'Cerrar Administrador' : 'Administrador'}
         </button>
         <button
-          onClick={() => setShowThirdTimePanel(!showThirdTimePanel)}
-          className="p-2 bg-orange-500 text-white rounded mb-4 ml-4"
-        >
-          {showThirdTimePanel ? 'Cerrar 3er Tiempo' : '3er Tiempo'}
-        </button>
-        <button
           onClick={handleSendWhatsApp}
           className="p-2 bg-blue-500 text-white rounded mb-4 ml-4"
         >
           Enviar por WhatsApp
         </button>
-        {showAdminPanel && (
+        {showAdminPanel ? (
           <AdminPanel
             students={students}
             onAddStudent={handleAddStudent}
             onEditStudent={handleEditStudent}
             onDeleteStudent={handleDeleteStudent}
           />
-        )}
-        {showThirdTimePanel && (
-          <ThirdTimePanel
-            items={items}
-            onAddItem={handleAddItem}
-            onDeleteItem={handleDeleteItem}
-          />
-        )}
-        {!showAdminPanel && !showThirdTimePanel && (
+        ) : (
           <StudentList
             students={students}
             selectedDate={selectedDate}
@@ -174,6 +152,7 @@ function App() {
             onDelete={handleDeleteStudent}
           />
         )}
+        
       </main>
     </div>
   );
