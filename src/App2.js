@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import Header from './components/Header';
-import StudentList from './components/StudentList';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import AdminPanel from './components/AdminPanel';
-import ThirdTimePanel from './components/ThirdTimePanel'; // Importar el nuevo componente
-import studentsData from './students.json';
+import React, { useState, useEffect } from "react";
+import Header from "./components/Header";
+import StudentList from "./components/StudentList";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import AdminPanel from "./components/AdminPanel";
+import ThirdTimePanel from "./components/ThirdTimePanel"; // Importar el nuevo componente
+import studentsData from "./students.json";
+import MatchPanel from "./components/MatchPanel";
 
 function App() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -14,15 +15,18 @@ function App() {
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [showThirdTimePanel, setShowThirdTimePanel] = useState(false);
   const [items, setItems] = useState([]);
+  const [showMatchPanel, setShowMatchPanel] = useState(false);
 
   useEffect(() => {
-    const sortedStudents = [...studentsData].sort((a, b) => a.name.localeCompare(b.name));
+    const sortedStudents = [...studentsData].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
     setStudents(sortedStudents);
 
     // Inicializar ausencias
     const initialAbsences = {};
-    const dateKey = new Date().toISOString().split('T')[0];
-    studentsData.forEach(student => {
+    const dateKey = new Date().toISOString().split("T")[0];
+    studentsData.forEach((student) => {
       initialAbsences[student.id] = { [dateKey]: true };
     });
     setAbsences(initialAbsences);
@@ -30,7 +34,7 @@ function App() {
 
   const handleToggleAbsence = (studentId) => {
     setAbsences((prevAbsences) => {
-      const dateKey = selectedDate.toISOString().split('T')[0];
+      const dateKey = selectedDate.toISOString().split("T")[0];
       const studentAbsences = prevAbsences[studentId] || {};
       return {
         ...prevAbsences,
@@ -48,7 +52,7 @@ function App() {
 
     // Marcar nuevo estudiante como ausente en la fecha seleccionada
     setAbsences((prevAbsences) => {
-      const dateKey = selectedDate.toISOString().split('T')[0];
+      const dateKey = selectedDate.toISOString().split("T")[0];
       return {
         ...prevAbsences,
         [newStudent.id]: { [dateKey]: true },
@@ -65,7 +69,9 @@ function App() {
   };
 
   const handleDeleteStudent = (id) => {
-    setStudents((prevStudents) => prevStudents.filter((student) => student.id !== id));
+    setStudents((prevStudents) =>
+      prevStudents.filter((student) => student.id !== id)
+    );
 
     // Eliminar las ausencias del estudiante eliminado
     setAbsences((prevAbsences) => {
@@ -84,14 +90,14 @@ function App() {
   };
 
   const generateWhatsAppMessage = () => {
-    const dateKey = selectedDate.toISOString().split('T')[0];
+    const dateKey = selectedDate.toISOString().split("T")[0];
     let message = `Listado de asistencia para el ${dateKey}:\n\n`;
 
     let totalStudents = 0;
     let totalPresent = 0;
     let totalAbsent = 0;
 
-    students.forEach(student => {
+    students.forEach((student) => {
       const isAbsent = absences[student.id]?.[dateKey] || false;
       totalStudents++;
       if (isAbsent) {
@@ -113,8 +119,10 @@ function App() {
 
   const handleSendWhatsApp = () => {
     const message = generateWhatsAppMessage();
-    const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+    const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+      message
+    )}`;
+    window.open(whatsappUrl, "_blank");
   };
 
   return (
@@ -134,13 +142,13 @@ function App() {
           onClick={() => setShowAdminPanel(!showAdminPanel)}
           className="p-2 bg-green-500 text-white rounded mb-4"
         >
-          {showAdminPanel ? 'Cerrar Administrador' : 'Administrador'}
+          {showAdminPanel ? "Cerrar Administrador" : "Administrador"}
         </button>
         <button
           onClick={() => setShowThirdTimePanel(!showThirdTimePanel)}
           className="p-2 bg-orange-500 text-white rounded mb-4 ml-4"
         >
-          {showThirdTimePanel ? 'Cerrar 3er Tiempo' : '3er Tiempo'}
+          {showThirdTimePanel ? "Cerrar 3er Tiempo" : "3er Tiempo"}
         </button>
         <button
           onClick={handleSendWhatsApp}
@@ -148,6 +156,15 @@ function App() {
         >
           Enviar por WhatsApp
         </button>
+
+        <button
+          onClick={() => setShowMatchPanel(!showMatchPanel)}
+          className="p-2 bg-yellow-500 text-white rounded mb-4 ml-4"
+        >
+          {showMatchPanel ? "Cerrar Partido" : "Partido"}
+        </button>
+        {showMatchPanel && <MatchPanel />}
+
         {showAdminPanel && (
           <AdminPanel
             students={students}
@@ -174,6 +191,7 @@ function App() {
             onDelete={handleDeleteStudent}
           />
         )}
+        
       </main>
     </div>
   );
