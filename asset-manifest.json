@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/controlTano/static/css/main.1759fa37.css",
-    "main.js": "/controlTano/static/js/main.253ec9e3.js",
+    "main.css": "/controlTano/static/css/main.e69147c3.css",
+    "main.js": "/controlTano/static/js/main.0880bb66.js",
     "static/js/453.aadb094c.chunk.js": "/controlTano/static/js/453.aadb094c.chunk.js",
     "index.html": "/controlTano/index.html",
-    "main.1759fa37.css.map": "/controlTano/static/css/main.1759fa37.css.map",
-    "main.253ec9e3.js.map": "/controlTano/static/js/main.253ec9e3.js.map",
+    "main.e69147c3.css.map": "/controlTano/static/css/main.e69147c3.css.map",
+    "main.0880bb66.js.map": "/controlTano/static/js/main.0880bb66.js.map",
     "453.aadb094c.chunk.js.map": "/controlTano/static/js/453.aadb094c.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.1759fa37.css",
-    "static/js/main.253ec9e3.js"
+    "static/css/main.e69147c3.css",
+    "static/js/main.0880bb66.js"
   ]
 }
