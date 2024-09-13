@@ -4,9 +4,10 @@ import StudentList from "./components/StudentList";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import AdminPanel from "./components/AdminPanel";
-import ThirdTimePanel from "./components/ThirdTimePanel"; // Importar el nuevo componente
-import MatchPanel from "./components/MatchPanel"; // Importar el nuevo componente
+import ThirdTimePanel from "./components/ThirdTimePanel";
+import MatchPanel from "./components/MatchPanel";
 import studentsData from "./students.json";
+import * as XLSX from "xlsx";
 
 function App() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -16,6 +17,7 @@ function App() {
   const [showThirdTimePanel, setShowThirdTimePanel] = useState(false);
   const [showMatchPanel, setShowMatchPanel] = useState(false);
   const [items, setItems] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const sortedStudents = [...studentsData].sort((a, b) =>
@@ -23,7 +25,6 @@ function App() {
     );
     setStudents(sortedStudents);
 
-    // Inicializar ausencias
     const initialAbsences = {};
     const dateKey = new Date().toISOString().split("T")[0];
     studentsData.forEach((student) => {
@@ -122,6 +123,39 @@ function App() {
     window.open(whatsappUrl, "_blank");
   };
 
+  const handleDownloadExcel = () => {
+    const dateKey = selectedDate.toISOString().split("T")[0];
+    const wsData = students.map((student) => {
+      const isAbsent = absences[student.id]?.[dateKey] || false;
+      return {
+        Nombre: student.name,
+        Apodo: student.nickname,
+        Posición: student.position,
+        Ausente: isAbsent ? "Sí" : "No",
+      };
+    });
+
+    let totalStudents = students.length;
+    let totalPresent = students.filter(
+      (student) => !(absences[student.id]?.[dateKey])
+    ).length;
+    let totalAbsent = totalStudents - totalPresent;
+
+    wsData.push({});
+    wsData.push({
+      Nombre: "Resumen",
+      Apodo: `Total jugadores: ${totalStudents}`,
+      Posición: `Total presentes: ${totalPresent}`,
+      Ausente: `Total ausentes: ${totalAbsent}`,
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(wsData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Asistencia");
+
+    XLSX.writeFile(workbook, `asistencia_${dateKey}.xlsx`);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Header />
@@ -135,33 +169,89 @@ function App() {
           />
         </div>
 
+        {/* Botón de hamburguesa */}
         <button
-          onClick={() => setShowAdminPanel(!showAdminPanel)}
-          className="p-2 bg-green-500 text-white rounded mb-4"
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="p-2 bg-gray-800 text-white rounded md:hidden"
         >
-          {showAdminPanel ? "Cerrar Administrador" : "Administrador"}
+          {menuOpen ? "Cerrar Opciones" : "Mas Opciones"}
         </button>
 
-        <button
-          onClick={() => setShowThirdTimePanel(!showThirdTimePanel)}
-          className="p-2 bg-orange-500 text-white rounded mb-4 ml-4"
-        >
-          {showThirdTimePanel ? "Cerrar 3er Tiempo" : "3er Tiempo"}
-        </button>
+        {/* Opciones del menú */}
+        {menuOpen && (
+          <div className="flex flex-col md:hidden">
+            <button
+              onClick={() => setShowAdminPanel(!showAdminPanel)}
+              className="p-2 bg-green-500 text-white rounded mb-2"
+            >
+              {showAdminPanel ? "Cerrar Administrador" : "Administrador"}
+            </button>
+            <button
+              onClick={() => setShowThirdTimePanel(!showThirdTimePanel)}
+              className="p-2 bg-orange-500 text-white rounded mb-2"
+            >
+              {showThirdTimePanel ? "Cerrar 3er Tiempo" : "3er Tiempo"}
+            </button>
+            <button
+              onClick={() => setShowMatchPanel(!showMatchPanel)}
+              className="p-2 bg-yellow-500 text-white rounded mb-2"
+            >
+              {showMatchPanel ? "Cerrar Partido" : "Partido"}
+            </button>
+          </div>
+        )}
 
-        <button
-          onClick={handleSendWhatsApp}
-          className="p-2 bg-blue-500 text-white rounded mb-4 ml-4"
-        >
-          Enviar por WhatsApp
-        </button>
+        {/* Botones en pantallas grandes */}
+        <div className="hidden md:flex mb-4 space-x-4">
+          <button
+            onClick={() => setShowAdminPanel(!showAdminPanel)}
+            className="p-2 bg-green-500 text-white rounded"
+          >
+            {showAdminPanel ? "Cerrar Administrador" : "Administrador"}
+          </button>
 
-        <button
-          onClick={() => setShowMatchPanel(!showMatchPanel)}
-          className="p-2 bg-yellow-500 text-white rounded mb-4 ml-4"
-        >
-          {showMatchPanel ? "Cerrar Partido" : "Partido"}
-        </button>
+          <button
+            onClick={() => setShowThirdTimePanel(!showThirdTimePanel)}
+            className="p-2 bg-orange-500 text-white rounded"
+          >
+            {showThirdTimePanel ? "Cerrar 3er Tiempo" : "3er Tiempo"}
+          </button>
+
+          <button
+            onClick={() => setShowMatchPanel(!showMatchPanel)}
+            className="p-2 bg-yellow-500 text-white rounded"
+          >
+            {showMatchPanel ? "Cerrar Partido" : "Partido"}
+          </button>
+        </div>
+
+        {/* Mostrar la lista de estudiantes */}
+        {!showAdminPanel && !showThirdTimePanel && !showMatchPanel && (
+          <>
+            <StudentList
+              students={students}
+              selectedDate={selectedDate}
+              absences={absences}
+              onToggleAbsence={handleToggleAbsence}
+            />
+
+                       {/* Botón para descargar el Excel debajo del listado */}
+                       <button
+              onClick={handleDownloadExcel}
+              className="p-2 bg-blue-500 text-white rounded mt-4"
+            >
+              Descargar Excel
+            </button>
+
+             {/* Botón para enviar por WhatsApp */}
+    <button
+      onClick={handleSendWhatsApp}
+      className="p-2 bg-green-500 text-white rounded mt-4 ml-2"
+    >
+      Enviar por WhatsApp
+    </button>
+          </>
+        )}
 
         {/* Mostrar el panel de partido */}
         {showMatchPanel && <MatchPanel />}
@@ -184,20 +274,9 @@ function App() {
             onDeleteItem={handleDeleteItem}
           />
         )}
-
-        {/* Mostrar la lista de estudiantes solo si no están los paneles abiertos */}
-        {!showAdminPanel && !showThirdTimePanel && !showMatchPanel && (
-          <StudentList
-            students={students}
-            selectedDate={selectedDate}
-            absences={absences}
-            onToggleAbsence={handleToggleAbsence}
-          />
-        )}
       </main>
     </div>
   );
 }
 
 export default App;
-

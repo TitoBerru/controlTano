@@ -4,9 +4,10 @@ import StudentList from "./components/StudentList";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import AdminPanel from "./components/AdminPanel";
-import ThirdTimePanel from "./components/ThirdTimePanel"; // Importar el nuevo componente
-import studentsData from "./students.json";
+import ThirdTimePanel from "./components/ThirdTimePanel";
 import MatchPanel from "./components/MatchPanel";
+import studentsData from "./students.json";
+import * as XLSX from "xlsx"; // Importar la librería XLSX
 
 function App() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -14,8 +15,8 @@ function App() {
   const [students, setStudents] = useState([]);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [showThirdTimePanel, setShowThirdTimePanel] = useState(false);
-  const [items, setItems] = useState([]);
   const [showMatchPanel, setShowMatchPanel] = useState(false);
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
     const sortedStudents = [...studentsData].sort((a, b) =>
@@ -33,8 +34,8 @@ function App() {
   }, []);
 
   const handleToggleAbsence = (studentId) => {
+    const dateKey = selectedDate.toISOString().split("T")[0];
     setAbsences((prevAbsences) => {
-      const dateKey = selectedDate.toISOString().split("T")[0];
       const studentAbsences = prevAbsences[studentId] || {};
       return {
         ...prevAbsences,
@@ -50,9 +51,8 @@ function App() {
     const newStudent = { id: students.length + 1, name, nickname, position };
     setStudents((prevStudents) => [...prevStudents, newStudent]);
 
-    // Marcar nuevo estudiante como ausente en la fecha seleccionada
+    const dateKey = selectedDate.toISOString().split("T")[0];
     setAbsences((prevAbsences) => {
-      const dateKey = selectedDate.toISOString().split("T")[0];
       return {
         ...prevAbsences,
         [newStudent.id]: { [dateKey]: true },
@@ -72,8 +72,6 @@ function App() {
     setStudents((prevStudents) =>
       prevStudents.filter((student) => student.id !== id)
     );
-
-    // Eliminar las ausencias del estudiante eliminado
     setAbsences((prevAbsences) => {
       const newAbsences = { ...prevAbsences };
       delete newAbsences[id];
@@ -125,6 +123,44 @@ function App() {
     window.open(whatsappUrl, "_blank");
   };
 
+  const generateExcel = () => {
+    const dateKey = selectedDate.toISOString().split("T")[0];
+    const attendanceData = students.map((student) => ({
+      Nombre: student.name,
+      Presente: absences[student.id]?.[dateKey] ? "No" : "Sí",
+    }));
+
+    let totalStudents = students.length;
+    let totalPresent = students.filter(
+      (student) => !absences[student.id]?.[dateKey]
+    ).length;
+    let totalAbsent = totalStudents - totalPresent;
+
+    // Agregar resumen al final de los datos
+    attendanceData.push({});
+    attendanceData.push({ Nombre: "Resumen", Presente: "" });
+    attendanceData.push({ Nombre: "Total de jugadores", Presente: totalStudents });
+    attendanceData.push({ Nombre: "Total presentes", Presente: totalPresent });
+    attendanceData.push({ Nombre: "Total ausentes", Presente: totalAbsent });
+
+    // Crear hoja de cálculo
+    const ws = XLSX.utils.json_to_sheet(attendanceData);
+
+    // Crear libro de trabajo
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Asistencia");
+
+    // Generar archivo y descargarlo
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Control_Asistencia_${dateKey}.xlsx`; // Nombre del archivo
+    a.click();
+    window.URL.revokeObjectURL(url); // Limpiar el objeto URL
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Header />
@@ -144,12 +180,14 @@ function App() {
         >
           {showAdminPanel ? "Cerrar Administrador" : "Administrador"}
         </button>
+
         <button
           onClick={() => setShowThirdTimePanel(!showThirdTimePanel)}
           className="p-2 bg-orange-500 text-white rounded mb-4 ml-4"
         >
           {showThirdTimePanel ? "Cerrar 3er Tiempo" : "3er Tiempo"}
         </button>
+
         <button
           onClick={handleSendWhatsApp}
           className="p-2 bg-blue-500 text-white rounded mb-4 ml-4"
@@ -157,14 +195,24 @@ function App() {
           Enviar por WhatsApp
         </button>
 
+        {/** Solo mostrar el botón si no están abiertos los paneles de 3er Tiempo o Partido */}
+        {!showThirdTimePanel && !showMatchPanel && (
+          <button
+            onClick={generateExcel} // Botón para descargar Excel
+            className="p-2 bg-purple-500 text-white rounded mb-4 ml-4"
+          >
+            Descargar Excel
+          </button>
+        )}
+
         <button
           onClick={() => setShowMatchPanel(!showMatchPanel)}
           className="p-2 bg-yellow-500 text-white rounded mb-4 ml-4"
         >
           {showMatchPanel ? "Cerrar Partido" : "Partido"}
         </button>
-        {showMatchPanel && <MatchPanel />}
 
+        {showMatchPanel && <MatchPanel />}
         {showAdminPanel && (
           <AdminPanel
             students={students}
@@ -180,18 +228,14 @@ function App() {
             onDeleteItem={handleDeleteItem}
           />
         )}
-        {!showAdminPanel && !showThirdTimePanel && (
+        {!showAdminPanel && !showThirdTimePanel && !showMatchPanel && (
           <StudentList
             students={students}
             selectedDate={selectedDate}
             absences={absences}
             onToggleAbsence={handleToggleAbsence}
-            isAdmin={showAdminPanel}
-            onEdit={handleEditStudent}
-            onDelete={handleDeleteStudent}
           />
         )}
-        
       </main>
     </div>
   );
