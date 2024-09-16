@@ -158,8 +158,11 @@ const MatchPanel = () => {
             onChange={(e) => setLocalTeam(e.target.value)}
             className="p-2 mb-2 text-center w-full text-xl font-bold bg-gray-900 border border-gray-700 rounded"
           />
-          <div className="text-6xl font-bold text-center items-center">{localScore}</div>
-          <div className="mt-4 flex flex-col space-y-2">
+          {/* BOTONES */}
+          <div className="text-6xl font-bold text-center items-center">
+            {localScore}
+          </div>
+          <div className="mt-4 flex font-semibold flex-col space-y-2">
             <button
               onClick={() => handleScoreUpdate("local", 5, "TRY")}
               className="p-2 bg-green-500 text-white rounded"
@@ -178,53 +181,50 @@ const MatchPanel = () => {
             >
               PENAL (+3)
             </button>
-            {/* Botones Auxiliares PENAL - TACKLE */}
-            <div className=" container-fluid text-center items-center p-3">
-              <button
-                onClick={() => handlePenalOtorgado("local")}
-                className="p-2 bg-red-500 text-white rounded mr-3 vw-100"
-              >
-                Penal Otorgado
-              </button>
-              <button
-                onClick={() => handleTackle("local")}
-                className="p-2 bg-red-500 text-white rounded mr-3 vh-50"
-              >
-                Tackle
-              </button>
-            </div>
+          </div>
+          {/* Botones Auxiliares PENAL - TACKLE */}
+
+          <div className="mt-4 flex flex-wrap justify-between space-x-2 gap-2">
+          <button
+              onClick={() => handlePenalOtorgado("local")}
+              className="p-2 bg-red-500 text-white rounded w-1/3 ml-2"
+            >
+              Penal Otorgado
+            </button>
+            <button
+              onClick={() => handleTackle("local")}
+              className="p-2 bg-red-500 text-white rounded w-1/3"
+            >
+              Tackle
+            </button>
 
             {/* Mas BOTONES EXTRAS - SCRUM - LINE  */}
-            <div className=" container-fluid text-center items-center p-3">
-            
-                <button
-                  onClick={() => handleScrumGanado("local")}
-                  className="p-2 bg-red-500 text-white rounded m-1"
-                >
-                  Scrum Ganado
-                </button>
-                <button
-                  onClick={() => handleScrumPerdido("local")}
-                  className="p-2 bg-red-500 text-white rounded m-1"
-                >
-                  Scrum Perdido
-                </button>
 
-                <button
-                  onClick={() => handleLineGanado("local")}
-                  className="p-2 bg-red-500 text-white rounded m-1 w-100"
-                >
-                  Line Ganado
-                </button>
-                <button
-                  onClick={() => handleLinePerdido("local")}
-                  className="p-2 bg-red-500 text-white rounded m-1"
-                >
-                  Line Perdido
-                </button>
-             
-                </div>
-            
+            <button
+              onClick={() => handleScrumGanado("local")}
+              className="p-2 bg-red-500 text-white rounded w-1/3"
+            >
+              Scrum Ganado
+            </button>
+            <button
+              onClick={() => handleScrumPerdido("local")}
+              className="p-2 bg-red-500 text-white rounded w-1/3"
+            >
+              Scrum Perdido
+            </button>
+
+            <button
+              onClick={() => handleLineGanado("local")}
+              className="p-2 bg-red-500 text-white rounded w-1/3"
+            >
+              Line Ganado
+            </button>
+            <button
+              onClick={() => handleLinePerdido("local")}
+              className="p-2 bg-red-500 text-white rounded w-1/3"
+            >
+              Line Perdido
+            </button>
           </div>
         </div>
 
@@ -237,7 +237,7 @@ const MatchPanel = () => {
             className="p-2 mb-2 text-center w-full text-xl font-bold bg-gray-900 border border-gray-700 rounded"
           />
           <div className="text-6xl font-bold text-center">{visitorScore}</div>
-          <div className="mt-4 flex flex-col space-y-2">
+          <div className="mt-4 flex flex-col font-semibold space-y-2">
             <button
               onClick={() => handleScoreUpdate("visitor", 5, "TRY")}
               className="p-2 bg-green-500 text-white rounded"
@@ -265,7 +265,6 @@ const MatchPanel = () => {
           </div>
         </div>
       </div>
-      
 
       {/* Botones de deshacer y enviar por WhatsApp */}
       <div className="mt-4">
